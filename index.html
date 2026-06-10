@@ -82,7 +82,7 @@
   }
 
   /* SECTIONS */
-  section { padding: 80px 0; }
+  section { padding: 40px 0; }
   .container { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
 
   /* HERO */
@@ -326,59 +326,93 @@
   }
 
   /* PROJECTS */
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(245px, 310px));
+    justify-content: center;
+    gap: 18px;
+  }
   .project-category-title {
     font-family: 'Fira Code', monospace;
     color: var(--blue);
     font-size: 13px;
-    margin: 28px 0 16px;
+    margin: 20px 0 10px;
   }
   .project-category-title:first-of-type { margin-top: 0; }
   .project-card {
+    min-height: 320px;
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: all 0.25s;
+    border-radius: 16px;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.45s ease;
     position: relative;
     overflow: hidden;
-    display: flex; flex-direction: column;
+    isolation: isolate;
+    outline: none;
   }
   .project-card::before {
     content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 5;
+    height: 3px;
     background: linear-gradient(90deg, var(--green), var(--blue));
     opacity: 0;
-    transition: opacity 0.25s;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .project-card:hover { border-color: rgba(0,255,136,0.3); transform: translateY(-3px); }
-  .project-card:hover::before { opacity: 1; }
+  .project-card:hover,
+  .project-card:focus-visible,
+  .project-card:focus-within {
+    border-color: rgba(0,255,136,0.42);
+    transform: translateY(-8px);
+    box-shadow: 0 24px 55px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,255,136,0.08);
+  }
+  .project-card:hover::before,
+  .project-card:focus-visible::before,
+  .project-card:focus-within::before { opacity: 1; transform: scaleX(1); }
   .project-card.featured { border-color: rgba(0,255,136,0.25); }
-  .project-card.featured::before { opacity: 1; }
-  .project-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .project-icon {
-    width: 40px; height: 40px;
-    background: rgba(0,255,136,0.08);
-    border: 1px solid rgba(0,255,136,0.2);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+  .project-card.featured::before { opacity: 1; transform: scaleX(1); }
+  .project-media {
+    position: absolute; inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 24px 68px;
+    background: #f4f6f8;
   }
-  .project-links { display: flex; gap: 8px; }
-  .project-link {
-    width: 32px; height: 32px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
+  .project-media::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 35%, rgba(7,12,18,0.12) 57%, rgba(7,12,18,0.96) 100%);
+  }
+  .project-image {
+    display: block;
+    width: auto; height: auto;
+    max-width: 100%;
+    max-height: 210px;
+    object-fit: contain;
     border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 14px;
-    transition: all 0.2s;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease;
   }
-  .project-link:hover { color: var(--green); border-color: var(--green); }
+  .project-card:hover .project-image,
+  .project-card:focus-visible .project-image,
+  .project-card:focus-within .project-image { transform: scale(1.035); filter: saturate(0.72) brightness(0.45); }
+  .project-caption {
+    position: absolute; left: 22px; right: 22px; bottom: 20px; z-index: 2;
+    transition: opacity 0.25s ease, transform 0.4s ease;
+  }
+  .project-card:hover .project-caption,
+  .project-card:focus-visible .project-caption,
+  .project-card:focus-within .project-caption { opacity: 0; transform: translateY(14px); }
+  .project-kicker { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .project-hint {
+    color: rgba(255,255,255,0.6);
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
   .project-badge {
+    align-self: flex-start;
     font-family: 'Fira Code', monospace;
     font-size: 10px;
     padding: 3px 8px;
@@ -392,8 +426,22 @@
     border-color: rgba(240,136,62,0.2);
     color: var(--orange);
   }
-  .project-name { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-  .project-desc { color: var(--muted); font-size: 13px; line-height: 1.7; flex: 1; margin-bottom: 16px; }
+  .project-name { color: #fff; font-size: 20px; font-weight: 700; line-height: 1.25; }
+  .project-details {
+    position: absolute; inset: 0; z-index: 3;
+    display: flex; flex-direction: column;
+    padding: 22px;
+    background: radial-gradient(circle at 100% 0%, rgba(88,166,255,0.17), transparent 40%), linear-gradient(145deg, rgba(13,20,29,0.96), rgba(8,13,20,0.985));
+    opacity: 0;
+    transform: translateY(100%);
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+  }
+  .project-card:hover .project-details,
+  .project-card:focus-visible .project-details,
+  .project-card:focus-within .project-details { opacity: 1; transform: translateY(0); }
+  .project-details .project-name { margin: 11px 0 8px; font-size: 18px; }
+  .project-desc { color: var(--muted); font-size: 12px; line-height: 1.55; flex: 1; margin-bottom: 12px; }
+  .project-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
   .project-stack { display: flex; flex-wrap: wrap; gap: 6px; }
   .stack-tag {
     font-family: 'Fira Code', monospace;
@@ -402,6 +450,29 @@
     padding: 2px 8px;
     background: var(--bg3);
     border-radius: 4px;
+  }
+  .project-demo {
+    flex: 0 0 auto;
+    min-width: 58px; min-height: 42px;
+    border: 1px solid var(--green);
+    border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #07120d;
+    background: var(--green);
+    text-decoration: none;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .project-demo:hover, .project-demo:focus-visible {
+    color: var(--green);
+    background: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,255,136,0.16);
+    outline: none;
   }
 
   /* EXPERIENCE */
@@ -627,8 +698,25 @@
       gap: 12px;
     }
     .about-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card { width: min(100%, 330px); min-height: 330px; margin-inline: auto; }
+    .project-details { padding: 22px; }
+    .project-media { padding: 26px 22px 68px; }
+    .project-footer { align-items: flex-end; }
     .hero-photo-wrap { width: min(260px, 82vw); }
     .stat-grid { width: min(260px, 82vw); }
+  }
+  @media (hover: none) {
+    .project-hint { font-size: 0; }
+    .project-hint::after { content: 'Tap to explore'; font-size: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-card,
+    .project-card::before,
+    .project-image,
+    .project-caption,
+    .project-details,
+    .project-demo { transition-duration: 0.01ms !important; }
   }
 </style>
 </head>
@@ -923,174 +1011,110 @@
       <span class="section-tag">// 04. projects</span>
       <h2 class="section-title">Things I've <span class="dim">Built</span></h2>
     </div>
+
     <div class="project-category-title">// Web Applications</div>
     <div class="projects-grid">
+      <article class="project-card featured" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/placement-portal.png" alt="RIT Training and Placement Portal"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Web</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">Placement Portal - College</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Web Application</span>
+          <h3 class="project-name">Placement Portal - College</h3>
+          <p class="project-desc">Developed a centralized placement management system to automate campus recruitment workflows. Implemented role-based access for Students, TPCs, and TPOs, supporting profile management, document verification, drive announcements, and placement analytics.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">React.js</span><span class="stack-tag">Node.js</span><span class="stack-tag">MySQL</span></div></div>
+        </div>
+      </article>
 
-      <div class="project-card featured">
-        <div class="project-top">
-          <div class="project-icon">🎓</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/language-lab.png" alt="English Language Lab logo"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Web</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">Language Lab Software</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Web Application</span>
+          <h3 class="project-name">Language Lab Software</h3>
+          <p class="project-desc">Developed an academic learning platform for FY Diploma students to perform practicals and assessments in English, BCC, and Professional Communication. Currently used by 500+ students, streamlining practical execution and progress tracking through a digital interface.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">ASP.NET</span><span class="stack-tag">C#</span><span class="stack-tag">MySQL</span></div></div>
         </div>
-        <div class="project-name">Placement Portal — College</div>
-        <p class="project-desc">Developed a centralized placement management system to automate campus recruitment workflows. Implemented role-based access for Students, TPCs, and TPOs, supporting profile management, document verification, drive announcements, and placement analytics.</p>
-        <div class="project-stack">
-          <span class="stack-tag">React.js</span>
-          <span class="stack-tag">Node.js</span>
-          <span class="stack-tag">MySQL</span>
-        </div>
-      </div>
+      </article>
 
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">📘</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/adroit-club.png" alt="Adroit Innovators Club banner"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Web</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">Adroit Club Website</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Web Application</span>
+          <h3 class="project-name">Adroit Club Website</h3>
+          <p class="project-desc">Developed the official website of Adroit Innovator's Club to establish its online presence and showcase events, achievements, and technical activities. Designed a responsive and user-friendly interface to improve accessibility and engagement.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">React.js</span></div><a class="project-demo" href="https://aic-rit.adroitsdvc.in/" target="_blank" rel="noopener noreferrer" aria-label="Open Adroit Club Website demo">Demo</a></div>
         </div>
-        <div class="project-name">Language Lab Software</div>
-        <p class="project-desc">Developed an academic learning platform for FY Diploma students to perform practicals and assessments in English, BCC, and Professional Communication. Currently used by 500+ students, streamlining practical execution and progress tracking through a digital interface.</p>
-        <div class="project-stack">
-          <span class="stack-tag">ASP.NET</span>
-          <span class="stack-tag">C#</span>
-          <span class="stack-tag">MySQL</span>
-        </div>
-      </div>
+      </article>
 
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">🤖</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/pet-shelter.png" alt="Pet Shelter logo"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Web</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">Pet Shelter</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Web Application</span>
+          <h3 class="project-name">Pet Shelter</h3>
+          <p class="project-desc">Built a full-stack pet adoption platform connecting rescued pets with potential adopters. Implemented JWT authentication, adoption request management, image uploads, and an admin dashboard for shelter operations.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">MongoDB</span><span class="stack-tag">Express</span><span class="stack-tag">React</span><span class="stack-tag">Node.js</span></div><a class="project-demo" href="https://pet-shelter-vq2s.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Open Pet Shelter demo">Demo</a></div>
         </div>
-        <div class="project-name">Adroit Club Website</div>
-        <p class="project-desc">Developed the official website of Adroit Innovator's Club to establish its online presence and showcase events, achievements, and technical activities. Designed a responsive and user-friendly interface to improve accessibility and engagement.</p>
-        <div class="project-stack">
-          <span class="stack-tag">React.js</span>
-        </div>
-      </div>
+      </article>
 
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">🐾</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/pharmabuddy.png" alt="PharmaBuddy logo"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Web</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">PharmaBuddy</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Web Application</span>
+          <h3 class="project-name">PharmaBuddy</h3>
+          <p class="project-desc">AI-powered pharmacy study platform and full-stack study companion built for pharmacy students to memorize drugs, access organized subject notes, and test themselves with AI-generated quizzes.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">React + Vite</span><span class="stack-tag">Node.js</span><span class="stack-tag">Groq AI</span><span class="stack-tag">Vercel</span></div><a class="project-demo" href="https://pharma-buddy.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Open PharmaBuddy demo">Demo</a></div>
         </div>
-        <div class="project-name">Pet Shelter</div>
-        <p class="project-desc">Built a full-stack pet adoption platform connecting rescued pets with potential adopters. Implemented JWT authentication, adoption request management, image uploads, and an admin dashboard for shelter operations.</p>
-        <div class="project-stack">
-          <span class="stack-tag">MongoDB</span>
-          <span class="stack-tag">Express</span>
-          <span class="stack-tag">React</span>
-          <span class="stack-tag">Node.js</span>
-        </div>
-      </div>
+      </article>
 
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">💊</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/mess-menu-hub.png" alt="Mess and Stay Finder interface"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Web</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">Mess Menu Hub</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Web Application</span>
+          <h3 class="project-name">Mess Menu Hub</h3>
+          <p class="project-desc">Developed a platform that helps students discover nearby PGs and mess services based on reviews and feedback. Enabled users to compare available options and make informed decisions regarding food and accommodation.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">HTML</span><span class="stack-tag">CSS</span><span class="stack-tag">PHP</span><span class="stack-tag">MySQL</span></div></div>
         </div>
-        <div class="project-name">PharmaBuddy</div>
-        <p class="project-desc">AI-powered pharmacy study platform and full-stack study companion built for pharmacy students to memorize drugs, understand specifications, access organized subject notes, and test themselves with AI-generated quizzes. Built as a real-world app for a friend studying pharmacy, deployed and actively used.</p>
-        <div class="project-stack">
-          <span class="stack-tag">React + Vite</span>
-          <span class="stack-tag">Node.js</span>
-          <span class="stack-tag">Groq AI (LLaMA)</span>
-          <span class="stack-tag">Ultramsg</span>
-          <span class="stack-tag">WhatsApp</span>
-          <span class="stack-tag">Vercel</span>
-        </div>
-      </div>
-
-      <!-- <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">📷</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
-        </div>
-        <div class="project-name">RP Photography Portfolio</div>
-        <p class="project-desc">Developed a professional portfolio website to enhance the photographer's online presence and client reach. Integrated portfolio galleries, contact features, and responsive design for an improved user experience.</p>
-        <div class="project-stack">
-          <span class="stack-tag">React.js</span>
-          <span class="stack-tag">MongoDB</span>
-        </div>
-      </div> -->
-
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">🍽️</div>
-          <div class="project-links">
-            <span class="project-badge">Web</span>
-          </div>
-        </div>
-        <div class="project-name">Mess Menu Hub</div>
-        <p class="project-desc">Developed a platform that helps students discover nearby PGs and mess services based on reviews and feedback. Enabled users to compare available options and make informed decisions regarding food and accommodation.</p>
-        <div class="project-stack">
-          <span class="stack-tag">HTML</span>
-          <span class="stack-tag">CSS</span>
-          <span class="stack-tag">PHP</span>
-          <span class="stack-tag">MySQL</span>
-        </div>
-      </div>
-
+      </article>
     </div>
 
     <div class="project-category-title">// Mobile Applications</div>
     <div class="projects-grid">
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/employee-gamification.jpeg" alt="Employee Gamification trophy logo"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Mobile</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">Employee Gamification App</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Mobile Application</span>
+          <h3 class="project-name">Employee Gamification App</h3>
+          <p class="project-desc">Developed a role-based task management application for Employees, HR, and CEOs. Improved team collaboration and productivity through task tracking, performance monitoring, and gamification features.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">Android</span><span class="stack-tag">Firebase</span></div></div>
+        </div>
+      </article>
 
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">🏆</div>
-          <div class="project-links">
-            <span class="project-badge">Mobile</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/bookbuddy.jpeg" alt="Maharashtra State Board of Technical Education logo"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Mobile</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">BookBuddy</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Mobile Application</span>
+          <h3 class="project-name">BookBuddy</h3>
+          <p class="project-desc">Built a centralized study resource platform for Diploma students based on the I and K Scheme curriculum. Provided instant access to notes, quizzes, study materials, and department-specific academic resources.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">Android</span><span class="stack-tag">Firebase</span></div></div>
         </div>
-        <div class="project-name">Employee Gamification App</div>
-        <p class="project-desc">Developed a role-based task management application for Employees, HR, and CEOs. Improved team collaboration and productivity through task tracking, performance monitoring, and gamification features.</p>
-        <div class="project-stack">
-          <span class="stack-tag">Android</span>
-          <span class="stack-tag">Firebase</span>
-        </div>
-      </div>
+      </article>
 
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">📚</div>
-          <div class="project-links">
-            <span class="project-badge">Mobile</span>
-          </div>
+      <article class="project-card" tabindex="0">
+        <div class="project-media"><img class="project-image" src="assets/projects/freshcheck.png" alt="FreshCheck shopping cart logo"></div>
+        <div class="project-caption"><div class="project-kicker"><span class="project-badge">Mobile</span><span class="project-hint">Hover to explore</span></div><h3 class="project-name">FreshCheck</h3></div>
+        <div class="project-details">
+          <span class="project-badge">Mobile Application</span>
+          <h3 class="project-name">FreshCheck</h3>
+          <p class="project-desc">Developed a product information and freshness tracking application using QR code scanning. Enabled users to view manufacturing details, expiry dates, ingredients, and real-time product inventory information.</p>
+          <div class="project-footer"><div class="project-stack"><span class="stack-tag">Android</span><span class="stack-tag">Firebase</span><span class="stack-tag">QR Scanner</span></div></div>
         </div>
-        <div class="project-name">BookBuddy</div>
-        <p class="project-desc">Built a centralized study resource platform for Diploma students based on the I and K Scheme curriculum. Provided instant access to notes, quizzes, study materials, and department-specific academic resources.</p>
-        <div class="project-stack">
-          <span class="stack-tag">Android</span>
-          <span class="stack-tag">Firebase</span>
-        </div>
-      </div>
-
-      <div class="project-card">
-        <div class="project-top">
-          <div class="project-icon">🔎</div>
-          <div class="project-links">
-            <span class="project-badge">Mobile</span>
-          </div>
-        </div>
-        <div class="project-name">FreshCheck</div>
-        <p class="project-desc">Developed a product information and freshness tracking application using QR code scanning. Enabled users to view manufacturing details, expiry dates, ingredients, and real-time product inventory information.</p>
-        <div class="project-stack">
-          <span class="stack-tag">Android</span>
-          <span class="stack-tag">Firebase</span>
-          <span class="stack-tag">QR Scanner</span>
-        </div>
-      </div>
-
+      </article>
     </div>
   </div>
 </section>
